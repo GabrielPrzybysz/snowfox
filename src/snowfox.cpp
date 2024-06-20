@@ -1,21 +1,60 @@
 #include <vector>
 #include <iostream>
-#include <dirent.h>
+#include <fstream>
 #include <string>
+#include <regex>
 
 using namespace std;
 
+
+// Password finder for env files based on regex
+vector<string> env_regex_finder(const string& file_path) {
+    vector<string> passwords;
+    // File reader
+    ifstream file(file_path);
+    if (!file.is_open()) {
+        cerr << "Failed to open file: " << file_path << endl;
+        return {};
+    }
+
+    // Regex pattern to match "PASS..=" and capture the rest of the line
+    regex pattern("(PASS.*=)(.*)");
+
+    // For every line in the document
+    string line;
+    while (getline(file, line)) {
+        smatch matches;
+        if (regex_search(line, matches, pattern)) {
+            // matches[2] because matches[0] is the whole match, matches[1] is the "PASS..="
+            passwords.push_back(matches[2]);
+        }
+    }
+
+    // Close the file to avoid memory leaks
+    file.close();
+
+    // Return the password vector
+    return passwords;
+}
+
+
 // Here should be the file processing logic
-void process_file(const string& line) {
+vector<string> process_file(const string& line) {
     // In case databse files are found, there could be a special kind of detection
     if (line.ends_with(".db")) {
-        cout << "Found a database file: " << line << endl;
+        // Still needs a proper logic here
+        //cout << "Found a database file: " << line << endl;
     }
 
     // Basic regex is going to be applied for env files
     if (line.ends_with(".env")) {
-        cout << "Found an env file: " << line << endl;
+        // This is still just a basic regex, there could be more
+        //cout << "Found an env file: " << line << endl;
+        return env_regex_finder(line);
     }
+
+    // In case the file is ignored
+    return {};
 }
 
 
@@ -50,9 +89,24 @@ int main()
     cout << "The snow fox starts its hunt!" << endl << endl;
     // The ascii art would be printed here along with the quote
 
+    // Initializing variables
+    vector<string> files;
+    vector<string> passwords;
+
     // This should be an iterator
-    vector<string> files = crawl_files();
+    files = crawl_files();
     for (const auto& file_path : files) {
-        process_file(file_path);
+        vector<string> new_passwords = process_file(file_path);
+        passwords.insert(passwords.end(), new_passwords.begin(), new_passwords.end());
+    }
+
+    if (passwords.size()) {
+        cout << "Scan complete, found the following passwords:" << endl;
+        for (const auto& password : passwords) {
+            cout << password << endl;
+        }
+    }
+    else {
+        cout << "The scan is over, but no password was found" << endl;
     }
 }
