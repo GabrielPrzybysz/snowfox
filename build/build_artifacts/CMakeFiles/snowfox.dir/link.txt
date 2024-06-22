@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/snowfox.dir/snowfox.cpp.o -o snowfox
