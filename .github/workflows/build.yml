@@ -33,12 +33,14 @@ jobs:
           mv build_artifacts build
 
       - name: Commit and push build artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add build
           git commit -m "Add build artifacts"
-          git push
+          git push origin main
 
   build-windows:
     runs-on: windows-latest
@@ -51,7 +53,9 @@ jobs:
         uses: microsoft/setup-msbuild@v1
 
       - name: Install CMake
-        uses: chrislennon/action-cmake@v1
+        run: |
+          # Install CMake on Windows
+          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
 
       - name: Build src/snowfox.cpp
         run: |
@@ -67,9 +71,11 @@ jobs:
           mv build_artifacts build/Release
 
       - name: Commit and push build artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add build/Release
           git commit -m "Add build artifacts"
-          git push
+          git push origin main
