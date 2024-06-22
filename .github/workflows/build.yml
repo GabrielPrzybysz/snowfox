@@ -23,14 +23,14 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          cmake ../src
+          cmake ../src -DCMAKE_CXX_STANDARD=20
           make
 
       - name: Archive build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: build-artifacts-linux
-          path: build/Release/snowfox-linux
+          path: build/snowfox
 
   build-windows:
     runs-on: windows-latest
@@ -49,11 +49,11 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake ../src -G "Visual Studio 16 2019" -A x64
+          cmake ../src -G "Visual Studio 16 2019" -A x64 -DCMAKE_CXX_STANDARD=20
           cmake --build . --config Release
 
       - name: Archive build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: build-artifacts-windows
-          path: build/Release/snowfox-win.exe
+          path: build/Release/snowfox.exe
