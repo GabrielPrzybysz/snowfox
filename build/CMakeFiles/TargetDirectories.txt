@@ -1,0 +1,3 @@
+/home/runner/work/snowfox/snowfox/build/CMakeFiles/snowfox.dir
+/home/runner/work/snowfox/snowfox/build/CMakeFiles/edit_cache.dir
+/home/runner/work/snowfox/snowfox/build/CMakeFiles/rebuild_cache.dir
