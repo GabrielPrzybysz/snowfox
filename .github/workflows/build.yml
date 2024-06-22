@@ -26,11 +26,19 @@ jobs:
           cmake ../src -DCMAKE_CXX_STANDARD=20
           make
 
-      - name: Archive build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-artifacts-linux
-          path: build/snowfox
+      - name: Save build artifacts to repository
+        run: |
+          mkdir -p build_artifacts
+          cp -r build/* build_artifacts/
+          mv build_artifacts build
+
+      - name: Commit and push build artifacts
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add build
+          git commit -m "Add build artifacts"
+          git push
 
   build-windows:
     runs-on: windows-latest
@@ -52,8 +60,16 @@ jobs:
           cmake ../src -G "Visual Studio 16 2019" -A x64 -DCMAKE_CXX_STANDARD=20
           cmake --build . --config Release
 
-      - name: Archive build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-artifacts-windows
-          path: build/Release/snowfox.exe
+      - name: Save build artifacts to repository
+        run: |
+          mkdir build_artifacts
+          cp -r build/Release/* build_artifacts/
+          mv build_artifacts build/Release
+
+      - name: Commit and push build artifacts
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add build/Release
+          git commit -m "Add build artifacts"
+          git push
