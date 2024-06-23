@@ -25,7 +25,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: $(VERSION)
+          VERSION: ${{ steps.build.outputs.VERSION }}
 
         with:
           tag_name: v${{ env.VERSION }}
