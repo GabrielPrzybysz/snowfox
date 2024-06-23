@@ -1,6 +1,6 @@
 #!/bin/bash
 
-eval $(grep -v -e '^#' release_info.txt | xargs -I {} echo export "'{}'")
+eval $(grep -v -e '^#' release.env | xargs -I {} echo export "'{}'")
 
 mkdir temp
 mkdir build 2>/dev/null

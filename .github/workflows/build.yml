@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - experimental-betterbuild
+    paths:
+      - 'release.env'
 
 jobs:
   build-linux:
@@ -18,7 +20,7 @@ jobs:
         id: build
         run: |
           source build.sh
-          cat release_info.txt >> $GITHUB_ENV
+          cat release.env >> $GITHUB_ENV
 
       - name: Create GitHub Release with binary attachments
         id: create_release
@@ -30,7 +32,7 @@ jobs:
           tag_name: v${{ env.VERSION }}
           release_name: Release v${{ env.VERSION }}
           body: |
-            ${{ steps.build.outputs.description }}
+            ${{ env.DESCRIPTION }}
 
       - name: Upload snowfox binary to release
         uses: actions/upload-release-asset@v1
