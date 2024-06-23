@@ -1,2 +1,2 @@
-VERSION=first-blood
-DESCRIPTION=The first version of what is yet to become the most reliable tool for password detection
+VERSION=0.0.1
+DESCRIPTION= - Now we have ASCII art and daily messages :)
