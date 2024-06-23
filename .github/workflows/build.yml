@@ -43,6 +43,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git pull
           git add build/snowfox-linux-${VERSION}
           git commit -m "Add build artifacts for Linux version ${VERSION}"
           git push origin main
