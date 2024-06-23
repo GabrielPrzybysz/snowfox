@@ -1,5 +1,3 @@
-# .github/workflows/build.yml
-
 name: Build SnowFox
 
 on:
@@ -9,7 +7,7 @@ on:
       - 'release/*'
 
 env:
-  VERSION: '0.0.1'  
+  VERSION: '0.0.1'
 
 jobs:
   build-linux:
@@ -18,11 +16,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Clean previous build artifacts (Linux)
-        run: |
-          rm -rf build
-          mkdir build
 
       - name: Install dependencies
         run: |
@@ -36,12 +29,26 @@ jobs:
           make snowfox
           mv snowfox snowfox-linux-${VERSION}
 
-      - name: Commit and push build artifacts (Linux)
+      - name: Create GitHub Release with binary attachment
+        id: create_release
+        uses: softprops/action-gh-release@v1
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add build/snowfox-linux-${VERSION}
-          git commit -m "Add build artifacts for Linux version ${VERSION}"
-          git push origin main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        with:
+          tag_name: v${{ env.VERSION }}
+          release_name: Release v${{ env.VERSION }}
+          body: |
+            Release v${{ env.VERSION }}
+            - Built for Linux
+
+      - name: Upload snowfox binary to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/snowfox-linux-${{ env.VERSION }}
+          asset_name: snowfox-linux-${{ env.VERSION }}
+          asset_content_type: application/octet-stream
