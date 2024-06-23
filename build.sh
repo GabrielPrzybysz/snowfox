@@ -1,7 +1,6 @@
 #!/bin/bash
 
-RELEASE_INFO=$(cat release_info.txt)
-VERSION=$(echo "$RELEASE_INFO" | grep '^VERSION=' | sed 's/VERSION=//')
+eval $(grep -v -e '^#' release_info.txt | xargs -I {} echo export "'{}'")
 
 mkdir temp
 mkdir build 2>/dev/null
