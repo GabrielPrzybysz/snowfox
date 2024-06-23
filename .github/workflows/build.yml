@@ -6,7 +6,8 @@ on:
       - main
 
 env:
-  VERSION: '0.0.2'
+  VERSION_FILE: version.txt
+  DESCRIPTION_FILE: description.txt
 
 jobs:
   build-linux:
@@ -26,12 +27,20 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y g++ make cmake
 
+      - name: Read version from file
+        id: read_version
+        run: echo "::set-output name=version::$(cat $VERSION_FILE)"
+
+      - name: Read description from file
+        id: read_description
+        run: echo "::set-output name=description::$(cat $DESCRIPTION_FILE)"
+
       - name: Build snowfox for Linux
         run: |
           cd build
           cmake ../src -DCMAKE_CXX_STANDARD=20
           make snowfox
-          mv snowfox snowfox-linux-${VERSION}
+          mv snowfox snowfox-linux-${{ env.VERSION }}
 
       - name: Create GitHub Release with binary attachment
         id: create_release
@@ -40,11 +49,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         with:
-          tag_name: v${{ env.VERSION }}
-          release_name: Release v${{ env.VERSION }}
+          tag_name: v${{ steps.read_version.outputs.version }}
+          release_name: Release v${{ steps.read_version.outputs.version }}
           body: |
-            Release v${{ env.VERSION }}
-            - Built for Linux
+            ${{ steps.read_description.outputs.description }}
 
       - name: Upload snowfox binary to release
         uses: actions/upload-release-asset@v1
@@ -53,6 +61,6 @@ jobs:
 
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/snowfox-linux-${{ env.VERSION }}
-          asset_name: snowfox-linux-${{ env.VERSION }}
+          asset_path: ./build/snowfox-linux-${{ steps.read_version.outputs.version }}
+          asset_name: snowfox-linux-${{ steps.read_version.outputs.version }}
           asset_content_type: application/octet-stream
