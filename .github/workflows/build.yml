@@ -25,7 +25,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ steps.build.outputs.VERSION }}
 
         with:
           tag_name: v${{ env.VERSION }}
@@ -37,7 +36,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ steps.build.outputs.VERSION }}
 
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
