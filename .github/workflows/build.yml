@@ -37,9 +37,10 @@ jobs:
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: $VERSION
 
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/snowfox-linux-$VERSION
-          asset_name: snowfox-linux-$VERSION
+          asset_path: ./build/snowfox-linux-${{ env.VERSION }}
+          asset_name: snowfox-linux-${{ env.VERSION }}
           asset_content_type: application/octet-stream
