@@ -1,16 +1,19 @@
 #!/bin/bash
 
-VERSION="0.0.1"
+VERSION="0.0.2"
 
-rm -rf build
-mkdir build
+mkdir temp
+mkdir build 2>/dev/null
 
 sudo apt-get update
 sudo apt-get install -y g++ make cmake
 
-cd build
+cd temp
 cmake ../src -DCMAKE_CXX_STANDARD=20
 make snowfox
-mv snowfox snowfox-linux-${VERSION}
+mv snowfox ../build/snowfox-linux-${VERSION}
+
+cd ..
+rm -rf temp
 
 echo "The build was a success: snowfox-linux-${VERSION}"
