@@ -24,7 +24,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y g++ make cmake
 
-      - name: Check if build directory exists
+      - name: Check if build directory exists (Linux)
         run: |
           if [ ! -d "build" ]; then
             mkdir build
@@ -61,16 +61,18 @@ jobs:
         run: |
           choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
 
-      - name: Check if build directory exists
+      - name: Check if build directory exists (Windows)
         run: |
-          if not exist build mkdir build
+          if not exist build (
+            mkdir build
+          )
 
       - name: Build snowfox for Windows
         run: |
           cd build
           cmake ../src -G "Visual Studio 16 2019" -A x64 -DCMAKE_CXX_STANDARD=20
           cmake --build . --config Release --target snowfox
-          mv Release/snowfox.exe snowfox-win-${VERSION}.exe
+          move Release\snowfox.exe snowfox-win-${VERSION}.exe
 
       - name: Commit and push build artifacts
         env:
