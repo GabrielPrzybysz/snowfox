@@ -18,8 +18,7 @@ jobs:
         id: build
         run: |
           source build.sh
-          echo "::set-output name=version::${VERSION}"
-          echo "::set-output name=description::${DESCRIPTION}"
+          cat release_info.txt >> $GITHUB_ENV
 
       - name: Create GitHub Release with binary attachments
         id: create_release
@@ -29,7 +28,7 @@ jobs:
 
         with:
           tag_name: v${{ steps.build.outputs.version }}
-          release_name: Release v${{ steps.build.outputs.version }}
+          release_name: Release v$VERSION
           body: |
             ${{ steps.build.outputs.description }}
 
@@ -40,6 +39,6 @@ jobs:
 
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/snowfox-linux-${{ steps.build.outputs.version }}
-          asset_name: snowfox-linux-${{ steps.build.outputs.version }}
+          asset_path: ./build/snowfox-linux-$VERSION
+          asset_name: snowfox-linux-$VERSION
           asset_content_type: application/octet-stream
