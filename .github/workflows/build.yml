@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - 'release/*'
 
 env:
   VERSION: '0.0.1'
