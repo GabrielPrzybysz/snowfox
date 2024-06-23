@@ -1,6 +1,7 @@
 #!/bin/bash
 
-VERSION="0.0.2"
+RELEASE_INFO=$(cat release_info.txt)
+VERSION=$(echo "$RELEASE_INFO" | grep '^VERSION=' | sed 's/VERSION=//')
 
 mkdir temp
 mkdir build 2>/dev/null
