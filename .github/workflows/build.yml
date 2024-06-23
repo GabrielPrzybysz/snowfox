@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - main
+      - experimental-betterbuild
     paths:
-      - '**src/*'
+      - 'release.env'
 
 jobs:
   build-linux:
@@ -15,41 +16,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Clean previous build artifacts (Linux)
+      - name: Build SnowFox versions
+        id: build
         run: |
-          rm -rf build
-          mkdir build
+          source build.sh
+          cat release.env >> $GITHUB_ENV
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y g++ make cmake
-
-      - name: Read version and description from file
-        id: read_release_info
-        run: |
-          RELEASE_INFO=$(cat release_info.txt)
-          echo "::set-output name=version::$(echo "$RELEASE_INFO" | grep '^VERSION=' | sed 's/VERSION=//')"
-          echo "::set-output name=description::$(echo "$RELEASE_INFO" | grep '^DESCRIPTION=' | sed 's/DESCRIPTION=//')"
-
-      - name: Build snowfox for Linux
-        run: |
-          cd build
-          cmake ../src -DCMAKE_CXX_STANDARD=20
-          make snowfox
-          mv snowfox snowfox-linux-${{ steps.read_release_info.outputs.version }}
-
-      - name: Create GitHub Release with binary attachment
+      - name: Create GitHub Release with binary attachments
         id: create_release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         with:
-          tag_name: v${{ steps.read_release_info.outputs.version }}
-          release_name: Release v${{ steps.read_release_info.outputs.version }}
+          tag_name: v${{ env.VERSION }}
+          release_name: Release v${{ env.VERSION }}
           body: |
-            ${{ steps.read_release_info.outputs.description }}
+            ${{ env.DESCRIPTION }}
 
       - name: Upload snowfox binary to release
         uses: actions/upload-release-asset@v1
@@ -58,6 +41,6 @@ jobs:
 
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/snowfox-linux-${{ steps.read_release_info.outputs.version }}
-          asset_name: snowfox-linux-${{ steps.read_release_info.outputs.version }}
+          asset_path: ./build/snowfox-linux-${{ env.VERSION }}
+          asset_name: snowfox-linux-${{ env.VERSION }}
           asset_content_type: application/octet-stream
