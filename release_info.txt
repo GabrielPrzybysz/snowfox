@@ -1,2 +1,2 @@
-VERSION=0.0.2
-DESCRIPTION=Release v0.0.2 - Built for Linux
+VERSION=first-blood
+DESCRIPTION=The first version of what is yet to become the most reliable tool for password detection
