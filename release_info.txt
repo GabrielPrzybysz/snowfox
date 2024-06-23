@@ -1,0 +1,2 @@
+VERSION=0.0.2
+DESCRIPTION=Release v0.0.2 - Built for Linux
