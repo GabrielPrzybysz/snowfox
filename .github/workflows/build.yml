@@ -19,6 +19,7 @@ jobs:
       - name: Build SnowFox versions
         id: build
         run: |
+          bash build_dependencies.sh
           source build.sh
           cat release.env >> $GITHUB_ENV
 
