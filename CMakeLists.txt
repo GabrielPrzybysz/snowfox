@@ -5,10 +5,7 @@ cmake_minimum_required(VERSION 3.10)
 project(SnowFox)
 
 # Specify source files
-set(SOURCE_FILES
-    src/snowfox.cpp
-    src/crawler.cpp
-)
+file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -16,5 +13,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Add the executable
 add_executable(snowfox ${SOURCE_FILES})
 
-# Include the header files from the same directory
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+# Include the header files from the child directory
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/includes)
