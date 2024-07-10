@@ -6,6 +6,8 @@
 #include <queue>
 #include <iostream>
 #include <filesystem>
+#include <thread>
+#include <mutex>
 
 std::vector<std::string> crawl_files();
 
